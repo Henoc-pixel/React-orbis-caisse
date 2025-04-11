@@ -1,0 +1,20 @@
+/* LireBesoin.css */
+.custom-table td,
+.custom-table th {
+  padding: 4px;
+  font-size: 12px;
+}
+
+.small-label {
+  width: 150px;
+  font-weight: bold;
+}
+
+.title-color {
+  color: #232754;
+}
+
+.btn-custom {
+  background-color: #0179a8;
+  color: white;
+}

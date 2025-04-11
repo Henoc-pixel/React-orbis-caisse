@@ -1,0 +1,44 @@
+.nav-link {
+    padding-left: 3.5rem;
+}
+/* Style général des notifications */
+.Toastify__toast {
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Notifications de succès */
+.Toastify__toast--success {
+  background-color: white !important;
+  color: white;
+}
+
+/* Notifications d'erreur */
+.Toastify__toast--error {
+  background-color: white !important;
+  color: white;
+}
+
+/* Notifications d'info */
+.Toastify__toast--info {
+  background-color: #17a2b8 !important;
+  color: white;
+}
+
+/* Notifications d'avertissement */
+.Toastify__toast--warning {
+  background-color: #ffc107 !important;
+  color: black;
+}
+
+/* Personnalisation de la barre de progression */
+.Toastify__progress-bar {
+  background: white !important;
+}
+.button-container {
+  display: flex;
+  gap: 15px; /* Ajustez la valeur selon l'espacement souhaité */
+}
+

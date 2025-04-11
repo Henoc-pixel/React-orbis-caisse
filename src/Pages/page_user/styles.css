@@ -1,0 +1,44 @@
+@media print {
+  th:nth-child(10),
+  td:nth-child(10) {
+    display: none;
+  }
+}
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Le conteneur principal utilise CSS Grid */
+.app-container {
+  display: grid;
+  grid-template-columns: 250px 1fr; /* Sidebar (250px) + Contenu (reste de l'écran) */
+  transition: grid-template-columns 0.3s ease-in-out;
+  flex-grow: 1;
+  height: calc(100vh - 60px); /* Ajuste la hauteur en enlevant la navbar */
+}
+
+/* Sidebar */
+.app-sidebar {
+  background-color: white;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease-in-out;
+  width: 250px;
+}
+
+/* Quand la sidebar est pliée */
+.app.collapsed .app-container {
+  grid-template-columns: 80px 1fr; /* Sidebar réduite (80px), le contenu s’agrandit */
+}
+
+.app.collapsed .app-sidebar {
+  width: 80px; /* Réduction de la sidebar */
+}
+
+/* Contenu principal qui prend l’espace disponible */
+.app-main {
+  padding: 20px;
+  overflow-x: hidden;
+}
+

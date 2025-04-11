@@ -1,0 +1,49 @@
+/* put your own styles to customize and override the theme */
+.accordion > .nav-item, .nav-link > a {
+    color: #222230; !important;
+}
+
+.accordion-collapse >.nav {
+    padding-left: 2.5rem !important;
+}
+
+.app-aside-light {
+    background-color: white; !important;
+}
+
+.navbar-light .navbar-brand {
+    color: white; !important;
+}
+
+
+.custom-select:focus {
+  border-color: #232754 !important;
+  box-shadow: 0 0 5px rgba(35, 39, 84, 0.5);
+}
+.custom-select option:checked {
+  background-color: #232754 !important;
+  color: white !important;
+}
+
+.custom-select-container .react-select__control {
+    border: 1px solid #ced4da;
+    box-shadow: none;
+}
+
+.custom-select-container .react-select__control:hover {
+    border-color: #232754;
+}
+
+.custom-select-container .react-select__option {
+    background-color: white;
+    color: black;
+}
+
+.custom-select-container .react-select__option--is-selected {
+    background-color: #232754;
+    color: white;
+}
+
+.custom-select-container .react-select__option--is-focused {
+    background-color: #f8f9fa;
+}

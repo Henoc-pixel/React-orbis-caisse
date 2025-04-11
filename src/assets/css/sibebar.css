@@ -1,0 +1,72 @@
+/* Ajoutez ceci dans votre fichier CSS (par exemple, custom.css) */
+.sidebar-title {
+  font-size: 14px; /* Taille réduite pour les titres */
+  font-weight: bold;
+  color: #232754; /* Couleur du texte */
+  margin-bottom: 1px; /* Espacement */
+  border-color: #232754;
+}
+
+.sidebar-label {
+  font-size: 12px; /* Taille réduite pour les labels */
+  color: #232754; /* Couleur du texte */
+}
+/* Ajoutez ceci dans votre fichier CSS (par exemple, custom.css) */
+/* Ajoutez ceci dans votre fichier CSS (par exemple, custom.css) */
+.aside-menu {
+  padding-top: 0; /* Supprime l'espace en haut */
+}
+
+.sidebar-section {
+  margin-bottom: -24px; /* Réduit l'espace entre les sections */
+  
+}
+
+.sidebar-section-title {
+  font-size: 12px; /* Taille réduite pour les titres */
+  font-weight: bold;
+  color: grey; /* Couleur du texte */
+  margin-bottom: 0; /* Réduit l'espace sous le titre */
+  left: 0; /* Alignement à gauche */
+  margin-top: 0%;
+  margin-left: 0cm;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+
+}
+
+.sidebar-section-label {
+  font-size: 12px; /* Taille réduite pour les labels */
+  color: #232754; /* Couleur du texte */
+  margin-left: 1rem; /* Ajustez la valeur selon vos besoins */
+ 
+}
+.sidebar-section-label:hover {
+   font-size: 13px; /* Taille réduite pour les labels */
+  width: 85%;
+}
+/* custom.css */
+.sidebar-popover-link {
+  padding: 5px 13px;
+  color: #232754;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.sidebar-popover-link:hover {
+  text-decoration: none; /* Désactive le soulignement */
+  background-color: #232754;
+  color: #f8f9fa;
+}
+/*
+.sidebar-group-title {
+  font-size: 1.1rem; /* Taille de police plus grande 
+  font-weight: bold; /* Texte en gras 
+  color: #232754; /* Couleur du texte 
+  padding: 0.75rem 1rem; /* Espacement interne
+  background-color: #f8f9fa; /* Fond légèrement gris
+  border-bottom: 1px solid #e9ecef; /* Bordure en bas
+  margin-top: 1rem; /* Espacement au-dessus du titre
+  margin-bottom: 0.5rem; /* Espacement en dessous du titre
+}*/
+

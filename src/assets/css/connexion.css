@@ -1,0 +1,50 @@
+/* Style général du container */
+.connexion-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa; /* Couleur de fond */
+  position: relative;
+}
+
+/* Bandeau supérieur bleu foncé */
+.header-banner {
+  background-color: #232754;
+  height: 35vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.header-banner h1 {
+  color: white;
+  font-weight: bold;
+}
+
+/* Container du formulaire */
+.form-container {
+  position: absolute;
+  top: 25vh; /* Ajustez cette valeur pour positionner le formulaire */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.login-card {
+  width: 420px;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+/* Copyright */
+.copyright {
+  font-size: 14px;
+  color: gray;
+  margin-top: 20px;
+}

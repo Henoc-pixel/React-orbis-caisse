@@ -1,0 +1,323 @@
+import { Form, Button, Card, Table } from "react-bootstrap";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaFileExcel, FaPrint, FaEye } from "react-icons/fa";
+import * as XLSX from "xlsx";
+import { Bon_Caisse } from "@/Components/types";
+
+const ListBoncaisse = () => {
+  const [bon_caisse, setBon_Caisse] = useState<Bon_Caisse[]>([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
+  const listRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
+    if (!isAuthenticated) {
+      navigate("/", { replace: true });
+    } else {
+      fetchBons();
+      fetchUsers(); // Récupérer les utilisateurs
+    }
+  }, [navigate]);
+
+  const fetchBons = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/bon_caisse");
+      const data = await response.json();
+      setBon_Caisse(data);
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération des bons de caisse :",
+        error
+      );
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/users");
+      if (!response.ok)
+        throw new Error("Erreur lors de la récupération des utilisateurs.");
+    } catch (error) {
+      console.error("Erreur lors du chargement des utilisateurs.", error);
+    }
+  };
+
+  const handlePrint = () => {
+    const printWindow = window.open("", "_blank");
+    if (printWindow && listRef.current) {
+      const dateNow = new Date().toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+
+      printWindow.document.write(`
+      <html>
+        <head>
+          <title>Impression</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            h2, p { text-align: center; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid black; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+            /* Masquer la colonne "Actions" */
+            th:last-child, td:last-child { display: none; }
+          </style>
+        </head>
+        <body>
+          <h2>Liste des bon de Caisse</h2>
+          <p>Date d'impression : ${dateNow}</p>
+          ${listRef.current.innerHTML}
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(() => {
+                window.close(); // Ferme la fenêtre après impression
+              }, 500); // Petite attente pour s'assurer que l'impression démarre bien
+            };
+          </script>
+        </body>
+      </html>
+    `);
+
+      printWindow.document.close();
+    }
+  };
+
+  const handleDownloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(bon_caisse);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Liste_Bon_Caisse");
+    XLSX.writeFile(workbook, "Liste_Bon_Caisse.xlsx");
+  };
+
+  // Filtrer les données en fonction de la recherche
+  const filteredBesoin = bon_caisse.filter((item) => {
+    const matchesReference = item.date_bon_caisse
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesIntitulé = item.reference_besoin
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesBeneficiaire = item.beneficiaire
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesObjet = item.nature_operation_besoin
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesSource_approvisionnement = item.type_operation_besoin
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesReference_source = item.reference_bon_caisse
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesMontant = item.montant_besoin
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesStatut = item.statut
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    return (
+      matchesReference ||
+      matchesIntitulé ||
+      matchesBeneficiaire ||
+      matchesObjet ||
+      matchesSource_approvisionnement ||
+      matchesReference_source ||
+      matchesMontant ||
+      matchesStatut
+    );
+  });
+
+  const lastIndex = currentPage * rowsPerPage;
+  const firstIndex = lastIndex - rowsPerPage;
+  const currentBesoin = filteredBesoin.slice(firstIndex, lastIndex);
+  const totalPages = Math.ceil(filteredBesoin.length / rowsPerPage);
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "validée":
+        return "badge-info";
+      case "en attente":
+        return "badge-danger";
+      case "annulée":
+        return "badge-warning";
+      case "approuvée":
+        return "badge-primary";
+      case "convertit":
+        return "badge-success";
+      default:
+        return "badge-secondary";
+    }
+  };
+
+  return (
+    <Card className="shadow w-100">
+      <Card.Header className="text-white bg-primary">
+        <h6 className="mb-0">Liste des bons de caisse</h6>
+      </Card.Header>
+      <Card.Body>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="d-flex align-items-center gap-4">
+            <Form.Group
+              controlId="search"
+              className="d-flex align-items-center gap-2 mb-0"
+            >
+              <Form.Label className="mb-0">Rechercher :</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Rechercher..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ width: "250px" }}
+              />
+            </Form.Group>
+            <Form.Label className="mb-0 ml-3">Afficher :</Form.Label>
+            <Form.Group
+              controlId="rowsPerPage"
+              className="d-flex align-items-center gap-2 mb-0"
+            >
+              <Form.Select
+                className="custom-select"
+                value={rowsPerPage}
+                onChange={(e) => {
+                  setRowsPerPage(parseInt(e.target.value));
+                  setCurrentPage(1);
+                }}
+              >
+                <option value={10}>10 lignes</option>
+                <option value={25}>25 lignes</option>
+                <option value={50}>50 lignes</option>
+                <option value={100}>100 lignes</option>
+              </Form.Select>
+            </Form.Group>
+          </div>
+
+          <div className="d-flex justify-content-end gap-3 button-container">
+            <Button variant="secondary" onClick={handlePrint}>
+              <FaPrint /> Imprimer
+            </Button>
+            <Button variant="success" onClick={handleDownloadExcel}>
+              <FaFileExcel /> Exporter Excel
+            </Button>
+          </div>
+        </div>
+
+        <div ref={listRef}>
+          <Table
+            striped
+            bordered
+            hover
+            responsive
+            className="shadow-sm custom-table"
+          >
+            <thead>
+              <tr className="text-center align-middle">
+                <th className="text-center align-middle">Date</th>
+                <th className="align-middle">Référence</th>
+                <th className="align-middle">Bénéficiaire</th>
+
+                <th className="align-middle">Montant (FCFA)</th>
+                <th className="align-middle">Statut</th>
+                <th className="text-center align-middle">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredBesoin.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center">
+                    Aucune donnée disponible dans le tableau.
+                  </td>
+                </tr>
+              ) : (
+                currentBesoin.map((bon_caisse) => (
+                  <tr key={bon_caisse.id}>
+                    <td className="align-middle text-center">
+                      {new Date(bon_caisse.date_bon_caisse).toLocaleDateString(
+                        "fr-FR",
+                        {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        }
+                      )}
+                    </td>
+                    <td className="align-middle">
+                      {bon_caisse.reference_bon_caisse}
+                    </td>
+                    <td className="align-middle">
+                      {bon_caisse.beneficiaire}{" "}
+                      {/* Afficher le nom et prénom */}
+                    </td>
+
+                    <td className="align-middle text-end">
+                      {Number(bon_caisse.montant_besoin).toLocaleString()}{" "}
+                    </td>
+                    <td className="text-center align-middle">
+                      <span
+                        className={`badge ${getStatusBadge(bon_caisse.statut)}`}
+                      >
+                        {bon_caisse.statut}
+                      </span>
+                    </td>
+                    <td className="text-center align-middle">
+                      <Button
+                        variant="light"
+                        size="sm"
+                        onClick={() =>
+                          navigate(`/Read-bon-caisse/${bon_caisse.id}`)
+                        }
+                      >
+                        <FaEye size={20} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </Table>
+        </div>
+
+        <div className="d-flex justify-content-between mt-3">
+          <div>
+            Page {currentPage} sur {totalPages}
+          </div>
+          <div className="button-container">
+            <Button
+              variant="outline-primary"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              Précédent
+            </Button>
+            <Button
+              variant="outline-primary"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              className="ms-2"
+            >
+              Suivant
+            </Button>
+          </div>
+        </div>
+        <hr />
+        <div className="d-flex justify-content-end">
+          <Link to="/Add-User">
+            <Button style={{ background: "#232754", color: "white" }}>
+              Nouveau
+            </Button>
+          </Link>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export default ListBoncaisse;

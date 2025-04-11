@@ -1,0 +1,140 @@
+/* App.css */
+
+/* Mode nuit général */
+.dark-mode {
+  background-color: #191927; /* Fond sombre */
+  color: #e0e0e0; /* Texte clair */
+}
+
+/* En-têtes et titres */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+  color: #ffffff; /* Texte blanc pour les titres */
+}
+
+/* Liens */
+.dark-mode a {
+  color: black; /* Couleur violette pour les liens */
+}
+
+.dark-mode a:hover {
+  color: white; /* Couleur plus foncée au survol */
+}
+.dark-mode .legend {
+  color: #e0e0e0; /* Texte clair pour les liens de la barre de navigation */
+}
+
+.dark-mode .bottom {
+  color: #e0e0e0; /* Texte clair pour les liens de la barre de navigation */
+}
+
+/* Cartes (Cards) */
+.dark-mode .card {
+  background-color: #2d2d3f; /* Fond sombre pour les cartes */
+  border-color: #333333; /* Bordure plus claire */
+  color: #e0e0e0; /* Texte clair */
+}
+
+.dark-mode .card-header {
+ 
+  border-bottom-color: #444444; /* Bordure plus claire */
+}
+
+/* Tableaux */
+.dark-mode table {
+  background-color: #2d2d3f; /* Fond sombre pour les tableaux */
+  color: #e0e0e0; /* Texte clair */
+}
+
+.dark-mode table th {
+  background-color: #191927; /* Fond sombre pour les en-têtes de tableau */
+  color: #ffffff; /* Texte blanc */
+}
+
+.dark-mode table td {
+  border-color: #444444; /* Bordure plus claire pour les cellules */
+}
+
+.dark-mode table tr:hover {
+  background-color: white; /* Fond sombre au survol des lignes */
+}
+
+/* Formulaires */
+.dark-mode .form-control {
+  background-color: #2d2d3f; /* Fond sombre pour les champs de formulaire */
+  border-color: #444444; /* Bordure plus claire */
+  color: #e0e0e0; /* Texte clair */
+}
+.dark-mode .form-select {
+  background-color: #2d2d3f; /* Fond sombre pour les champs de formulaire */
+  border-color: #444444; /* Bordure plus claire */
+  color: #e0e0e0; /* Texte clair */
+}
+.dark-mode .form-control:focus {
+  background-color: #444444; /* Fond plus clair lors de la focalisation */
+  border-color: #6200ee; /* Bordure violette */
+  color: #ffffff; /* Texte blanc */
+}
+
+.dark-mode .form-label {
+  color: #e0e0e0; /* Texte clair pour les étiquettes */
+}
+
+/* Barre de navigation (Navbar) */
+.dark-mode nav {
+  background-color: #191927; /* Fond sombre pour la barre de navigation */
+  border-bottom-color: #333333; /* Bordure plus claire */
+}
+
+.dark-mode nav .navbar-brand,
+.dark-mode nav .nav-link {
+  color: #e0e0e0; /* Texte clair pour les liens de la barre de navigation */
+}
+
+.dark-mode nav .nav-link:hover {
+  color: #bb86fc; /* Couleur violette au survol */
+}
+
+/* Sidebar */
+.dark-mode .app-aside {
+  background-color: #191927; /* Fond sombre pour le sidebar */
+  border-right-color: #333333; /* Bordure plus claire */
+}
+
+.dark-mode .app-aside .nav-link {
+  color: #e0e0e0; /* Texte clair pour les liens du sidebar */
+}
+
+.dark-mode .app-aside .nav-link:hover {
+  background-color: #333333; /* Fond plus clair au survol */
+}
+
+/* Footer */
+.dark-mode footer {
+  background-color: #191927; /* Fond sombre pour le footer */
+  border-top-color: #333333; /* Bordure plus claire */
+  color: #e0e0e0; /* Texte clair */
+}
+
+/* Notifications */
+.dark-mode .Toastify__toast {
+  background-color: #333333; /* Fond sombre pour les notifications */
+  color: #e0e0e0; /* Texte clair */
+}
+
+.dark-mode .Toastify__progress-bar {
+  background-color: #6200ee; /* Couleur violette pour la barre de progression */
+}
+.dark-mode .page-inner {
+  background-color: #191927; /* Couleur verte pour les notifications de succès */
+}
+.dark-mode .page {
+  background-color: #1e1e1e; /* Couleur verte pour les notifications de succès */
+}
+.dark-mode .app {
+  background-color: #191927; /* Couleur verte pour les notifications de succès */
+}
