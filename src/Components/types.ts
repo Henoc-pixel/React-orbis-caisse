@@ -247,3 +247,15 @@ export interface Societe {
   regime_fiscale: string;
   numero_tele_declarant: string;
 }
+
+// Ajoutez cette interface à la fin de types.ts
+export interface Notification {
+  id: string;
+  userId: string; // ID de l'utilisateur concerné
+  roleTarget: string; // Role cible de la notification
+  message: string;
+  link: string;
+  date: string;
+  read: boolean;
+  reference?: string; // Référence du besoin si applicable
+}

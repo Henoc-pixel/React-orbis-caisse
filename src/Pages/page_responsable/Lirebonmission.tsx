@@ -57,6 +57,46 @@ const LireBonMission: React.FC = () => {
     fetchData();
   }, [id]);
 
+  // Fonction pour créer une notification
+  const createNotification = async (
+    roleTarget: string,
+    message: string,
+    link: string,
+    reference?: string
+  ) => {
+    try {
+      // Trouver l'ID du manager
+      const usersResponse = await fetch("http://localhost:3000/users");
+      const users: User[] = await usersResponse.json();
+      const targetUser = users.find((u) => u.role === roleTarget);
+
+      if (!targetUser) {
+        console.error(`Aucun utilisateur avec le rôle ${roleTarget} trouvé`);
+        return;
+      }
+
+      const response = await fetch("http://localhost:3000/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: targetUser.id,
+          roleTarget,
+          message,
+          link,
+          date: new Date().toISOString(),
+          read: false,
+          reference,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la création de la notification");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la création de la notification:", error);
+    }
+  };
+
   const getFullName = (username: string): string => {
     const user = users.find((u) => u.username === username);
     return user ? `${user.nom} ${user.prenoms}` : username;
@@ -72,10 +112,7 @@ const LireBonMission: React.FC = () => {
     setShowSendModal(false);
     if (!bonMission || !userRole) return;
 
-    let newStatut = "brouillon";
-    if (["RESPONSABLE", "IMPRESSION"].includes(userRole)) {
-      newStatut = "en attente";
-    }
+    const newStatut = "en attente";
 
     try {
       await fetch(`http://localhost:3000/bon_mission/${id}`, {
@@ -83,7 +120,17 @@ const LireBonMission: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ statut: newStatut }),
       });
+
       setBonMission((prev) => (prev ? { ...prev, statut: newStatut } : prev));
+
+      // Envoyer une notification au MANAGER1
+      await createNotification(
+        "MANAGER1",
+        "Bon de mission envoyé en attente d'approbation",
+        "/Home-bon-mission",
+        bonMission.numero_bon
+      );
+
       toast.success("Bon de mission envoyé");
     } catch (error) {
       toast.error("Erreur lors de l'envoi du bon de mission");
@@ -95,10 +142,7 @@ const LireBonMission: React.FC = () => {
     setShowApproveModal(false);
     if (!bonMission || !userRole) return;
 
-    let newStatut = "en attente";
-    if (["MANAGER1"].includes(userRole)) {
-      newStatut = "approuvée";
-    }
+    const newStatut = "approuvée";
 
     try {
       await fetch(`http://localhost:3000/bon_mission/${id}`, {
@@ -106,7 +150,17 @@ const LireBonMission: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ statut: newStatut }),
       });
+
       setBonMission((prev) => (prev ? { ...prev, statut: newStatut } : prev));
+
+      // Envoyer une notification au MANAGER
+      await createNotification(
+        "MANAGER",
+        "Bon de mission approuvé en attente de décaissement",
+        "/List-bonmission-attente",
+        bonMission.numero_bon
+      );
+
       toast.success("Bon de mission approuvé");
     } catch (error) {
       toast.error("Erreur lors de l'approbation du bon de mission");

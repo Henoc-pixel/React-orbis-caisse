@@ -6,6 +6,7 @@ import { Besoin } from "@/Components/types";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "@/assets/css/LireBesoin.css";
+import { User } from "@/Components/types";
 
 const Lirebesoin: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -54,8 +55,41 @@ const Lirebesoin: React.FC = () => {
 
     fetchBesoin();
   }, [id]);
+  // Ajoutez cette fonction dans Lire.tsx
+  const createNotification = async (
+    roleTarget: string,
+    message: string,
+    link: string,
+    reference?: string
+  ) => {
+    try {
+      // Trouver l'ID du responsable
+      const usersResponse = await fetch("http://localhost:3000/users");
+      const users: User[] = await usersResponse.json();
+      const responsable = users.find((u) => u.role === roleTarget);
+
+      if (!responsable) return;
+
+      await fetch("http://localhost:3000/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: responsable.id,
+          roleTarget,
+          message,
+          link,
+          date: new Date().toISOString(),
+          read: false,
+          reference,
+        }),
+      });
+    } catch (error) {
+      console.error("Erreur lors de la création de la notification:", error);
+    }
+  };
 
   // Fonction pour envoyer le besoin
+  // Modifiez la fonction handleEnvoyer pour inclure la création de notification
   const handleEnvoyer = async () => {
     setShowSendModal(false);
     if (!besoin || !userRole) return;
@@ -77,6 +111,17 @@ const Lirebesoin: React.FC = () => {
       }
 
       setBesoin((prev) => (prev ? { ...prev, statut: newStatut } : prev));
+
+      // Créer une notification si le statut est "en attente"
+      if (newStatut === "en attente") {
+        await createNotification(
+          "RESPONSABLE",
+          "Nouvelle fiche de besoin en attente de validation",
+          "/List-Attente",
+          besoin.reference
+        );
+      }
+
       toast.success("Le besoin a été envoyé avec succès !");
     } catch (error) {
       console.error("Erreur lors de la mise à jour du statut", error);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Table, Button, Container, Modal } from "react-bootstrap";
 import { FaHome, FaEdit, FaCheck, FaTimes } from "react-icons/fa";
-import { Besoin } from "@/Components/types";
+import { Besoin, User } from "@/Components/types";
 import { ToastContainer, toast } from "react-toastify";
 import "@/assets/css/LireBesoin.css";
 
@@ -14,6 +14,25 @@ const Approuvéebesoin: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showApprouvéeModal, setShowApprouvéeModal] = useState(false);
   const [showAnnulerModal, setShowAnnulerModal] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  // Récupérer le rôle de l'utilisateur connecté
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+
+    const fetchUserRole = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/users/${userId}`);
+        const data = await response.json();
+        setUserRole(data.role);
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+
+    fetchUserRole();
+  }, []);
 
   useEffect(() => {
     const fetchBesoin = async () => {
@@ -35,28 +54,88 @@ const Approuvéebesoin: React.FC = () => {
     fetchBesoin();
   }, [id]);
 
+  // Fonction pour créer une notification
+  const createNotification = async (
+    roleTarget: string,
+    message: string,
+    link: string,
+    reference?: string
+  ) => {
+    try {
+      // Trouver l'ID du manager
+      const usersResponse = await fetch("http://localhost:3000/users");
+      const users: User[] = await usersResponse.json();
+      const manager = users.find((u) => u.role === roleTarget);
+
+      if (!manager) {
+        console.error(`Aucun utilisateur avec le rôle ${roleTarget} trouvé`);
+        return;
+      }
+
+      const response = await fetch("http://localhost:3000/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: manager.id,
+          roleTarget,
+          message,
+          link,
+          date: new Date().toISOString(),
+          read: false,
+          reference,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la création de la notification");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la création de la notification:", error);
+    }
+  };
+
   const handleApprouvée = async () => {
-    if (!besoin) return;
+    if (!besoin || !userRole) return;
     try {
       // Mettre à jour le statut du besoin dans l'API "besoin"
-      await fetch(`http://localhost:3000/besoin/${id}`, {
+      const response = await fetch(`http://localhost:3000/besoin/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ statut: "approuvée" }),
       });
 
+      if (!response.ok) {
+        throw new Error("Erreur lors de la mise à jour du statut");
+      }
+
       // Ajouter le besoin approuvé à l'API "besoins_approuvés"
-      await fetch(`http://localhost:3000/besoins_approuvés`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...besoin, statut: "approuvée" }),
-      });
+      const responseApprouve = await fetch(
+        `http://localhost:3000/besoins_approuvés`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...besoin, statut: "approuvée" }),
+        }
+      );
+
+      if (!responseApprouve.ok) {
+        throw new Error("Erreur lors de l'ajout du besoin approuvé");
+      }
 
       setBesoin((prev) => (prev ? { ...prev, statut: "approuvée" } : prev));
-      setShowApprouvéeModal(false); // Fermer la modale après validation
-      toast.success("Besoin Approuver avec succès !");
+      setShowApprouvéeModal(false);
+
+      // Envoyer une notification au MANAGER
+      await createNotification(
+        "MANAGER",
+        "Nouvelle fiche de besoin approuvée prête pour décaissement",
+        "/List-Approuvée",
+        besoin.reference
+      );
+
+      toast.success("Besoin approuvé avec succès !");
     } catch (error) {
-      toast.error("Erreur lors de l'Approbation du  besoin.");
+      toast.error("Erreur lors de l'approbation du besoin.");
       console.error("Erreur lors de la mise à jour du statut", error);
     }
   };
@@ -70,10 +149,10 @@ const Approuvéebesoin: React.FC = () => {
         body: JSON.stringify({ statut: "annulée" }),
       });
       setBesoin((prev) => (prev ? { ...prev, statut: "annulée" } : prev));
-      setShowAnnulerModal(false); // Fermer la modale après annulation
-      toast.success("Besoin Annuler avec succès !");
+      setShowAnnulerModal(false);
+      toast.success("Besoin annulé avec succès !");
     } catch (error) {
-      toast.error("Erreur lors de l'Annulation du besoin.");
+      toast.error("Erreur lors de l'annulation du besoin.");
       console.error("Erreur lors de la mise à jour du statut", error);
     }
   };

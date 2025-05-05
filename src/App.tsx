@@ -73,6 +73,7 @@ import Journalcaisse from "./Pages/page_manager.tsx/Journalcaisse";
 import Homejournalcaisse from "./Pages/page_manager1.tsx/Homejournalcaisse";
 import Homesociete from "./Pages/page_admin/listsociete";
 import Readsociete from "./Pages/page_admin/Modifsociete";
+import Notifications from "./Components/Notification";
 
 function App() {
   return (
@@ -167,6 +168,7 @@ function App() {
         <Route path="Edit-billetage/:id" element={<ModifBilletage />} />
         <Route path="Journal-Caisse" element={<Journalcaisse />} />
         <Route path="Home-journal-Caisse" element={<Homejournalcaisse />} />
+        <Route path="Notifications" element={<Notifications />} />
       </Route>
     </Routes>
   );
